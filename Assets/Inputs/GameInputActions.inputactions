@@ -44,6 +44,14 @@
                     "expectedControlType": "Vector2",
                     "processors": "NormalizeVector2",
                     "interactions": ""
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "f076ae36-efec-494e-ad51-1f90128fac2f",
+                    "expectedControlType": "Button",
+                    "processors": "NormalizeVector2",
+                    "interactions": "Press"
                 }
             ],
             "bindings": [
@@ -116,7 +124,7 @@
                 {
                     "name": "",
                     "id": "1b32b742-d834-425b-9d66-223942363630",
-                    "path": "",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -143,6 +151,17 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0cd0f4c8-c8ed-4f1b-ad0d-358b677e1c94",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

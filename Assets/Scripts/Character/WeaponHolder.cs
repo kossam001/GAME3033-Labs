@@ -4,61 +4,105 @@ using Character;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class WeaponHolder : MonoBehaviour
+namespace Weapons
 {
-    [SerializeField] private GameObject Weapon;
-    [SerializeField] private Transform WeaponSocket;
-
-    private Transform GripLocation;
-
-    private PlayerController PlayerController;
-    private Animator PlayerAnimator;
-
-    // Ref
-    private Camera MainCamera;
-
-    // Animator Hashes
-    private readonly int AimVerticalHash = Animator.StringToHash("AimVertical");
-    private readonly int AimHorizontalHash = Animator.StringToHash("AimHorizontal");
-
-    private void Awake()
+    public class WeaponHolder : MonoBehaviour
     {
-        PlayerController = GetComponent<PlayerController>();
-        PlayerAnimator = GetComponent<Animator>();
+        [SerializeField] private GameObject Weapon;
+        [SerializeField] private Transform WeaponSocket;
 
-        MainCamera = Camera.main;
-    }
+        private Transform GripLocation;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        GameObject spawnedWeapon = Instantiate(Weapon, WeaponSocket.position, WeaponSocket.rotation);
+        private PlayerController PlayerController;
+        private Animator PlayerAnimator;
 
-        if (!spawnedWeapon) return;
+        // Ref
+        private Camera MainCamera;
+        private WeaponComponent EquippedWeapon;
 
-        spawnedWeapon.transform.parent = WeaponSocket;
-        WeaponComponent weapon = spawnedWeapon.GetComponent<WeaponComponent>();
-        GripLocation = weapon.HandPosition;
-    }
+        // Animator Hashes
+        private readonly int AimVerticalHash = Animator.StringToHash("AimVertical");
+        private readonly int AimHorizontalHash = Animator.StringToHash("AimHorizontal");
+        private readonly int IsFiringHash = Animator.StringToHash("IsFiring");
+        private readonly int IsReloadingHash = Animator.StringToHash("IsReloading");
 
-    public void OnLook(InputValue delta)
-    {
-        Vector3 independentMousePosition =
-            MainCamera.ScreenToViewportPoint(PlayerController.CrosshairComponent.CurrentMousePosition);
+        private void Awake()
+        {
+            PlayerController = GetComponent<PlayerController>();
+            PlayerAnimator = GetComponent<Animator>();
 
-        PlayerAnimator.SetFloat(AimVerticalHash, independentMousePosition.y);
-        PlayerAnimator.SetFloat(AimHorizontalHash, independentMousePosition.x);
-    }
+            MainCamera = Camera.main;
+        }
 
-    private void OnAnimatorIK(int layerIndex)
-    {
-        PlayerAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1.0f);
-        PlayerAnimator.SetIKPosition(AvatarIKGoal.LeftHand, GripLocation.position);
-    }
+        // Start is called before the first frame update
+        void Start()
+        {
+            GameObject spawnedWeapon = Instantiate(Weapon, WeaponSocket.position, WeaponSocket.rotation);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            if (!spawnedWeapon) return;
+
+            spawnedWeapon.transform.parent = WeaponSocket;
+            EquippedWeapon = spawnedWeapon.GetComponent<WeaponComponent>();
+            GripLocation = EquippedWeapon.HandPosition;
+
+            EquippedWeapon.Initialize(this, PlayerController.CrosshairComponent);
+            PlayerEvents.Invoke_OnWeaponEquipped(EquippedWeapon);
+        }
+
+        public void OnLook(InputValue delta)
+        {
+            Vector3 independentMousePosition =
+                MainCamera.ScreenToViewportPoint(PlayerController.CrosshairComponent.CurrentMousePosition);
+
+            PlayerAnimator.SetFloat(AimVerticalHash, independentMousePosition.y);
+            PlayerAnimator.SetFloat(AimHorizontalHash, independentMousePosition.x);
+        }
+
+        public void OnFire(InputValue button)
+        {
+            if (button.isPressed)
+            {
+                PlayerController.isFiring = true;
+                EquippedWeapon.StartFiring();
+            }
+            else
+            {
+                PlayerController.isFiring = false;
+                EquippedWeapon.StopFiring();
+            }
+
+            PlayerAnimator.SetBool(IsFiringHash, PlayerController.isFiring);
+        }
+
+        public void OnReload(InputValue button)
+        {
+            StartReloading();
+        }
+
+        public void StartReloading()
+        {
+            PlayerController.isReloading = true;
+            PlayerAnimator.SetBool(IsReloadingHash, PlayerController.isReloading);
+            EquippedWeapon.StartReloading();
+
+            InvokeRepeating(nameof(StopReloading), 0, 0.1f);
+        }
+
+        public void StopReloading()
+        {
+            if (PlayerAnimator.GetBool(IsReloadingHash)) return;
+
+            PlayerController.isReloading = false;
+            EquippedWeapon.StopReloading();
+
+            CancelInvoke(nameof(StopReloading));
+        }
+
+        private void OnAnimatorIK(int layerIndex)
+        {
+            PlayerAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1.0f);
+            PlayerAnimator.SetIKPosition(AvatarIKGoal.LeftHand, GripLocation.position);
+        }
+
     }
 }
