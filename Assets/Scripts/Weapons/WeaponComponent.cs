@@ -5,9 +5,17 @@ using System;
 
 namespace Weapons
 {
+    public enum WeaponType
+    {
+        None, 
+        MachineGun,
+        Pistol
+    }
+
     [Serializable]
     public struct WeaponStats
     {
+        public WeaponType WeaponType;
         public string Name;
         public float Damage;
         public float BulletsInClip;
@@ -62,32 +70,32 @@ namespace Weapons
 
         protected virtual void FireWeapon()
         {
-
+            WeaponStats.BulletsInClip--;
         }
 
-        public void StartReloading()
+        public virtual void StartReloading()
         {
             Reloading = true;
             ReloadWeapon();
         }
 
-        public void StopReloading()
+        public virtual void StopReloading()
         {
             Reloading = false;
         }
 
-        private void ReloadWeapon()
+        protected virtual void ReloadWeapon()
         {
-            int bulletToReload = WeaponStats.TotalBulletsAvailable - WeaponStats.ClipSize;
+            int bulletToReload = WeaponStats.ClipSize - WeaponStats.TotalBulletsAvailable;
             if (bulletToReload < 0)
-            {
-                WeaponStats.BulletsInClip += WeaponStats.TotalBulletsAvailable;
-                WeaponStats.TotalBulletsAvailable = 0;
-            }
-            else
             {
                 WeaponStats.BulletsInClip = WeaponStats.ClipSize;
                 WeaponStats.TotalBulletsAvailable -= WeaponStats.ClipSize;
+            }
+            else
+            {
+                WeaponStats.BulletsInClip = WeaponStats.TotalBulletsAvailable;
+                WeaponStats.TotalBulletsAvailable = 0;
             }
         }
     }

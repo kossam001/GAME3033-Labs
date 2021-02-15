@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.AI;
 
 namespace Character
 {
@@ -17,6 +18,7 @@ namespace Character
         private Animator PlayerAnimator;
         private PlayerController PlayerController;
         private Rigidbody PlayerRigidbody;
+        private NavMeshAgent PlayerNavMeshAgent;
 
         private Vector2 InputVector = Vector2.zero;
         private Vector3 MoveDirection = Vector3.zero;
@@ -32,6 +34,7 @@ namespace Character
             PlayerController = GetComponent<PlayerController>();
             PlayerAnimator = GetComponent<Animator>();
             PlayerRigidbody = GetComponent<Rigidbody>();
+            PlayerNavMeshAgent = GetComponent<NavMeshAgent>();
         }
 
         private void Update()
@@ -45,7 +48,7 @@ namespace Character
 
             Vector3 movementDirection = MoveDirection * (currentSpeed * Time.deltaTime);
 
-            transform.position += movementDirection;
+            PlayerNavMeshAgent.Move(movementDirection);
         } 
 
         public void OnMovement(InputValue value)
@@ -64,15 +67,26 @@ namespace Character
 
         public void OnJump(InputValue button)
         {
+            if (PlayerController.isJumping) return;
+
             PlayerController.isJumping = true;
             PlayerAnimator.SetBool(IsJumpingHash, true);
 
+            PlayerNavMeshAgent.enabled = false;
+
+            Invoke(nameof(Jump), 0.1f);
+        }
+
+        public void Jump()
+        {
             PlayerRigidbody.AddForce((transform.up + MoveDirection) * JumpForce, ForceMode.Impulse);
         }
 
         private void OnCollisionEnter(Collision other)
         {
             if (!other.gameObject.CompareTag("Ground") && !PlayerController.isJumping) return;
+
+            PlayerNavMeshAgent.enabled = true;
 
             PlayerController.isJumping = false;
             PlayerAnimator.SetBool(IsJumpingHash, false);

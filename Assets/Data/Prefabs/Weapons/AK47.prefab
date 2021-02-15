@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GripIKLocation: {fileID: 1050851980654185539}
   WeaponStats:
+    WeaponType: 1
     Name: AK-47
     Damage: 10
     BulletsInClip: 10

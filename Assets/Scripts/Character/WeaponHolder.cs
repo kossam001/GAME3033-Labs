@@ -13,8 +13,13 @@ namespace Weapons
 
         private Transform GripLocation;
 
+        // Components
+        public PlayerController Controller => PlayerController;
         private PlayerController PlayerController;
         private Animator PlayerAnimator;
+
+        private bool WasFiring = false;
+        private bool FiringPressed = false;
 
         // Ref
         private Camera MainCamera;
@@ -25,6 +30,7 @@ namespace Weapons
         private readonly int AimHorizontalHash = Animator.StringToHash("AimHorizontal");
         private readonly int IsFiringHash = Animator.StringToHash("IsFiring");
         private readonly int IsReloadingHash = Animator.StringToHash("IsReloading");
+        private readonly int WeaponTypeHash = Animator.StringToHash("WeaponType");
 
         private void Awake()
         {
@@ -43,9 +49,12 @@ namespace Weapons
 
             spawnedWeapon.transform.parent = WeaponSocket;
             EquippedWeapon = spawnedWeapon.GetComponent<WeaponComponent>();
+
             GripLocation = EquippedWeapon.HandPosition;
 
             EquippedWeapon.Initialize(this, PlayerController.CrosshairComponent);
+            PlayerAnimator.SetInteger(WeaponTypeHash, (int)EquippedWeapon.WeaponStats.WeaponType); 
+
             PlayerEvents.Invoke_OnWeaponEquipped(EquippedWeapon);
         }
 
@@ -60,18 +69,28 @@ namespace Weapons
 
         public void OnFire(InputValue button)
         {
-            if (button.isPressed)
-            {
-                PlayerController.isFiring = true;
-                EquippedWeapon.StartFiring();
-            }
+            FiringPressed = button.isPressed;
+            if (FiringPressed)
+                StartFiring();
             else
-            {
-                PlayerController.isFiring = false;
-                EquippedWeapon.StopFiring();
-            }
+                StopFiring();
+        }
 
+        private void StartFiring()
+        {
+            if (EquippedWeapon.WeaponStats.TotalBulletsAvailable <= 0
+                && EquippedWeapon.WeaponStats.BulletsInClip <= 0) return;
+
+            PlayerController.isFiring = true;
             PlayerAnimator.SetBool(IsFiringHash, PlayerController.isFiring);
+            EquippedWeapon.StartFiring();
+        }
+
+        private void StopFiring()
+        {
+            PlayerController.isFiring = false;
+            PlayerAnimator.SetBool(IsFiringHash, PlayerController.isFiring);
+            EquippedWeapon.StopFiring();
         }
 
         public void OnReload(InputValue button)
@@ -81,6 +100,12 @@ namespace Weapons
 
         public void StartReloading()
         {
+            if (EquippedWeapon.WeaponStats.TotalBulletsAvailable <= 0 && PlayerController.isFiring)
+            {
+                StopFiring();
+                return;
+            }
+
             PlayerController.isReloading = true;
             PlayerAnimator.SetBool(IsReloadingHash, PlayerController.isReloading);
             EquippedWeapon.StartReloading();
@@ -94,8 +119,12 @@ namespace Weapons
 
             PlayerController.isReloading = false;
             EquippedWeapon.StopReloading();
-
             CancelInvoke(nameof(StopReloading));
+
+            if (WasFiring || FiringPressed) return;
+
+            StartFiring();
+            WasFiring = false;
         }
 
         private void OnAnimatorIK(int layerIndex)

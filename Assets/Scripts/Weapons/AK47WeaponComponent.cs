@@ -15,13 +15,15 @@ namespace Weapons
             ViewCamera = Camera.main;
         }
 
-        protected new void FireWeapon()
+        protected override void FireWeapon()
         {
             Ray screenRay = ViewCamera.ScreenPointToRay(new Vector3(Crosshair.CurrentMousePosition.x,
                 Crosshair.CurrentMousePosition.y, 0));
 
-            if (WeaponStats.BulletsInClip > 0 && !Reloading)
+            if (WeaponStats.BulletsInClip > 0 && !Reloading && !WeaponHolder.Controller.isJumping)
             {
+                base.FireWeapon();
+
                 if (!Physics.Raycast(screenRay, out RaycastHit hit, WeaponStats.FireDistance, WeaponStats.WeaponHitLayer)) return;
 
                 Vector3 RayDirection = HitLocation.point - ViewCamera.transform.position;
@@ -29,12 +31,10 @@ namespace Weapons
                 Debug.DrawRay(ViewCamera.transform.position, RayDirection * WeaponStats.FireDistance, Color.red);
 
                 HitLocation = hit;
-
-                WeaponStats.BulletsInClip--;
             }
-            else
+            else if (WeaponStats.BulletsInClip <= 0)
             {
-                StartReloading();
+                WeaponHolder.StartReloading();
             }
         }
 
