@@ -29,6 +29,10 @@ namespace Character
         private readonly int IsRunningHash = Animator.StringToHash("IsRunning");
         private readonly int IsJumpingHash = Animator.StringToHash("IsJumping");
 
+        [SerializeField] private float MoveDirectionBuffer = 2.0f;
+        private Vector3 NextPositionCheck;
+        private NavMeshHit hit;
+
         private void Awake()
         {
             PlayerController = GetComponent<PlayerController>();
@@ -40,7 +44,7 @@ namespace Character
         private void Update()
         {
             if (PlayerController.isJumping) return;
-            if (!(InputVector.magnitude > 0)) MoveDirection = Vector3.zero;
+            //if (!(InputVector.magnitude > 0)) MoveDirection = Vector3.zero;
 
             MoveDirection = transform.forward * InputVector.y + transform.right * InputVector.x;
 
@@ -48,7 +52,14 @@ namespace Character
 
             Vector3 movementDirection = MoveDirection * (currentSpeed * Time.deltaTime);
 
-            PlayerNavMeshAgent.Move(movementDirection);
+            NextPositionCheck = transform.position + MoveDirection * MoveDirectionBuffer;
+
+            if (NavMesh.SamplePosition(NextPositionCheck, out hit, 1.0f, NavMesh.AllAreas))
+            {
+                transform.position += movementDirection;
+            }
+
+            //PlayerNavMeshAgent.Move(movementDirection);
         } 
 
         public void OnMovement(InputValue value)
