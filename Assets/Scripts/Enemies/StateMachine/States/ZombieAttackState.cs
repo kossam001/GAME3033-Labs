@@ -5,6 +5,7 @@ using UnityEngine;
 public class ZombieAttackState : ZombieStates
 {
     private GameObject FollowTarget;
+    private IDamageable DamageableObject;
     private float AttackRange = 2.0f;
 
     private static readonly int MovementZHash = Animator.StringToHash("MovementZ");
@@ -23,11 +24,14 @@ public class ZombieAttackState : ZombieStates
         OwnerZombie.ZombieNavMesh.ResetPath();
         OwnerZombie.ZombieAnimator.SetFloat(MovementZHash, 0.0f);
         OwnerZombie.ZombieAnimator.SetBool(IsAttackingHash, true);
+
+        DamageableObject = FollowTarget.GetComponent<IDamageable>();
     }
 
     public override void IntervalUpdate()
     {
         base.IntervalUpdate();
+        DamageableObject?.TakeDamage(OwnerZombie.ZombieDamage);
     }
 
     // Update is called once per frame

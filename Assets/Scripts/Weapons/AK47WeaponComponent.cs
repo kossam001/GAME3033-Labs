@@ -31,11 +31,20 @@ namespace Weapons
                 Debug.DrawRay(ViewCamera.transform.position, RayDirection * WeaponStats.FireDistance, Color.red);
 
                 HitLocation = hit;
+
+                DamageTarget(hit);
             }
             else if (WeaponStats.BulletsInClip <= 0)
             {
                 WeaponHolder.StartReloading();
             }
+        }
+
+        private void DamageTarget(RaycastHit hit)
+        {
+            IDamageable damageable = hit.collider.GetComponent<IDamageable>();
+
+            damageable?.TakeDamage(WeaponStats.Damage);
         }
 
         private void OnDrawGizmos()
