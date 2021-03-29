@@ -87,6 +87,8 @@ public abstract class MenuWidget: MonoBehaviour
         {
             Debug.Log("MenuController not found.");
         }
+
+        AppEvents.Invoke_MouseCursorEnable(true);
     }
 
     public void ReturnToRootMenu()

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,9 +12,22 @@ public class HealthComponent : MonoBehaviour, IDamageable
     [SerializeField] private float TotalHealth;
 
     // Start is called before the first frame update
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         CurrentHealth = TotalHealth;    
+    }
+
+    internal void HealPlayer(int effect)
+    {
+        if (CurrentHealth < MaxHealth && CurrentHealth > 0)
+        {
+            CurrentHealth += effect;
+        }
+
+        if (CurrentHealth <= 0)
+        {
+            Destroy();
+        }
     }
 
     public virtual void Destroy()

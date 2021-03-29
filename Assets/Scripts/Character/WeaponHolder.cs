@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Character;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace Weapons
 {
     public class WeaponHolder : MonoBehaviour
     {
-        [SerializeField] private GameObject Weapon;
+        [SerializeField] private WeaponScriptable WeaponToSpawn;
         [SerializeField] private Transform WeaponSocket;
 
         private Transform GripLocation;
@@ -29,6 +30,7 @@ namespace Weapons
         private readonly int AimVerticalHash = Animator.StringToHash("AimVertical");
         private readonly int AimHorizontalHash = Animator.StringToHash("AimHorizontal");
         private readonly int IsFiringHash = Animator.StringToHash("IsFiring");
+
         private readonly int IsReloadingHash = Animator.StringToHash("IsReloading");
         private readonly int WeaponTypeHash = Animator.StringToHash("WeaponType");
 
@@ -43,19 +45,7 @@ namespace Weapons
         // Start is called before the first frame update
         void Start()
         {
-            GameObject spawnedWeapon = Instantiate(Weapon, WeaponSocket.position, WeaponSocket.rotation);
-
-            if (!spawnedWeapon) return;
-
-            spawnedWeapon.transform.parent = WeaponSocket;
-            EquippedWeapon = spawnedWeapon.GetComponent<WeaponComponent>();
-
-            GripLocation = EquippedWeapon.HandPosition;
-
-            EquippedWeapon.Initialize(this, PlayerController.CrosshairComponent);
-            PlayerAnimator.SetInteger(WeaponTypeHash, (int)EquippedWeapon.WeaponStats.WeaponType); 
-
-            PlayerEvents.Invoke_OnWeaponEquipped(EquippedWeapon);
+            //if (WeaponToSpawn) EquipWeapon(WeaponToSpawn);
         }
 
         public void OnLook(InputValue delta)
@@ -129,8 +119,33 @@ namespace Weapons
 
         private void OnAnimatorIK(int layerIndex)
         {
+            if (EquippedWeapon == null) return;
+
             PlayerAnimator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1.0f);
             PlayerAnimator.SetIKPosition(AvatarIKGoal.LeftHand, GripLocation.position);
+        }
+
+        public void EquipWeapon(WeaponScriptable weaponScriptable)
+        {
+            GameObject spawnedWeapon = Instantiate(weaponScriptable.ItemPrefab, WeaponSocket.position, WeaponSocket.rotation);
+
+            if (!spawnedWeapon) return;
+
+            spawnedWeapon.transform.parent = WeaponSocket;
+            EquippedWeapon = spawnedWeapon.GetComponent<WeaponComponent>();
+
+            GripLocation = EquippedWeapon.HandPosition;
+
+            EquippedWeapon.Initialize(this, weaponScriptable);
+            PlayerAnimator.SetInteger(WeaponTypeHash, (int)EquippedWeapon.WeaponStats.WeaponType);
+
+            PlayerEvents.Invoke_OnWeaponEquipped(EquippedWeapon);
+        }
+
+        public void UnequipWeapon()
+        {
+            Destroy(EquippedWeapon.gameObject);
+            EquippedWeapon = null;
         }
 
     }
