@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -30,6 +31,7 @@ namespace Character
         public bool isReloading;
         public bool isJumping;
         public bool isRunning;
+        public bool inInventory;
 
         private void Awake()
         {
@@ -71,6 +73,34 @@ namespace Character
             if (PlayerInput)
             {
                 PlayerInput.SwitchCurrentActionMap("ThirdPerson");
+            }
+        }
+
+        public void OnInventory(InputValue button)
+        {
+            if (inInventory)
+            {
+                inInventory = false;
+                OpenInventory(false);
+            }
+            else
+            {
+                inInventory = true;
+                OpenInventory(true);
+            }
+        }
+
+        private void OpenInventory(bool open)
+        {
+            if (open)
+            {
+                PauseManager.Instance.PauseGame();
+                GameUIController.EnableInventoryMenu();
+            }
+            else
+            {
+                PauseManager.Instance.UnpauseGame();
+                GameUIController.EnableGameMenu();
             }
         }
     }

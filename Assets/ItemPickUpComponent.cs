@@ -47,6 +47,14 @@ public class ItemPickUpComponent : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        ItemInstance.UseItem(other.GetComponent<PlayerController>());
+        //ItemInstance.UseItem(other.GetComponent<PlayerController>());
+
+        Debug.Log($"{PickUpItem.Name} - Picked Up");
+        InventoryComponent playerInventory = other.GetComponent<InventoryComponent>();
+
+        if (playerInventory) playerInventory.AddItem(ItemInstance, Amount);
+
+
+        Destroy(gameObject);
     }
 }

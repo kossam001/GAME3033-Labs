@@ -73,6 +73,14 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": ""NormalizeVector2"",
                     ""interactions"": ""Press""
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""b0d20995-a782-484d-8aaa-6041a6535f82"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": ""NormalizeVector2"",
+                    ""interactions"": ""Press""
                 }
             ],
             ""bindings"": [
@@ -196,6 +204,17 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""action"": ""PauseGame"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""99212fbc-3e3b-4e56-9135-05070c83da77"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -210,6 +229,14 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""569c5825-34bb-4b7d-b4c4-68bee768d589"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -221,6 +248,17 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""UnpauseGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b4d268b9-c4de-4c16-b6d2-6ab789a973d1"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -255,9 +293,11 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         m_ThirdPerson_Look = m_ThirdPerson.FindAction("Look", throwIfNotFound: true);
         m_ThirdPerson_Reload = m_ThirdPerson.FindAction("Reload", throwIfNotFound: true);
         m_ThirdPerson_PauseGame = m_ThirdPerson.FindAction("PauseGame", throwIfNotFound: true);
+        m_ThirdPerson_Inventory = m_ThirdPerson.FindAction("Inventory", throwIfNotFound: true);
         // PauseActionMap
         m_PauseActionMap = asset.FindActionMap("PauseActionMap", throwIfNotFound: true);
         m_PauseActionMap_UnpauseGame = m_PauseActionMap.FindAction("UnpauseGame", throwIfNotFound: true);
+        m_PauseActionMap_Inventory = m_PauseActionMap.FindAction("Inventory", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -314,6 +354,7 @@ public class @GameInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_ThirdPerson_Look;
     private readonly InputAction m_ThirdPerson_Reload;
     private readonly InputAction m_ThirdPerson_PauseGame;
+    private readonly InputAction m_ThirdPerson_Inventory;
     public struct ThirdPersonActions
     {
         private @GameInputActions m_Wrapper;
@@ -325,6 +366,7 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         public InputAction @Look => m_Wrapper.m_ThirdPerson_Look;
         public InputAction @Reload => m_Wrapper.m_ThirdPerson_Reload;
         public InputAction @PauseGame => m_Wrapper.m_ThirdPerson_PauseGame;
+        public InputAction @Inventory => m_Wrapper.m_ThirdPerson_Inventory;
         public InputActionMap Get() { return m_Wrapper.m_ThirdPerson; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -355,6 +397,9 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @PauseGame.started -= m_Wrapper.m_ThirdPersonActionsCallbackInterface.OnPauseGame;
                 @PauseGame.performed -= m_Wrapper.m_ThirdPersonActionsCallbackInterface.OnPauseGame;
                 @PauseGame.canceled -= m_Wrapper.m_ThirdPersonActionsCallbackInterface.OnPauseGame;
+                @Inventory.started -= m_Wrapper.m_ThirdPersonActionsCallbackInterface.OnInventory;
+                @Inventory.performed -= m_Wrapper.m_ThirdPersonActionsCallbackInterface.OnInventory;
+                @Inventory.canceled -= m_Wrapper.m_ThirdPersonActionsCallbackInterface.OnInventory;
             }
             m_Wrapper.m_ThirdPersonActionsCallbackInterface = instance;
             if (instance != null)
@@ -380,6 +425,9 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @PauseGame.started += instance.OnPauseGame;
                 @PauseGame.performed += instance.OnPauseGame;
                 @PauseGame.canceled += instance.OnPauseGame;
+                @Inventory.started += instance.OnInventory;
+                @Inventory.performed += instance.OnInventory;
+                @Inventory.canceled += instance.OnInventory;
             }
         }
     }
@@ -389,11 +437,13 @@ public class @GameInputActions : IInputActionCollection, IDisposable
     private readonly InputActionMap m_PauseActionMap;
     private IPauseActionMapActions m_PauseActionMapActionsCallbackInterface;
     private readonly InputAction m_PauseActionMap_UnpauseGame;
+    private readonly InputAction m_PauseActionMap_Inventory;
     public struct PauseActionMapActions
     {
         private @GameInputActions m_Wrapper;
         public PauseActionMapActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @UnpauseGame => m_Wrapper.m_PauseActionMap_UnpauseGame;
+        public InputAction @Inventory => m_Wrapper.m_PauseActionMap_Inventory;
         public InputActionMap Get() { return m_Wrapper.m_PauseActionMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -406,6 +456,9 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @UnpauseGame.started -= m_Wrapper.m_PauseActionMapActionsCallbackInterface.OnUnpauseGame;
                 @UnpauseGame.performed -= m_Wrapper.m_PauseActionMapActionsCallbackInterface.OnUnpauseGame;
                 @UnpauseGame.canceled -= m_Wrapper.m_PauseActionMapActionsCallbackInterface.OnUnpauseGame;
+                @Inventory.started -= m_Wrapper.m_PauseActionMapActionsCallbackInterface.OnInventory;
+                @Inventory.performed -= m_Wrapper.m_PauseActionMapActionsCallbackInterface.OnInventory;
+                @Inventory.canceled -= m_Wrapper.m_PauseActionMapActionsCallbackInterface.OnInventory;
             }
             m_Wrapper.m_PauseActionMapActionsCallbackInterface = instance;
             if (instance != null)
@@ -413,6 +466,9 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @UnpauseGame.started += instance.OnUnpauseGame;
                 @UnpauseGame.performed += instance.OnUnpauseGame;
                 @UnpauseGame.canceled += instance.OnUnpauseGame;
+                @Inventory.started += instance.OnInventory;
+                @Inventory.performed += instance.OnInventory;
+                @Inventory.canceled += instance.OnInventory;
             }
         }
     }
@@ -435,9 +491,11 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
         void OnPauseGame(InputAction.CallbackContext context);
+        void OnInventory(InputAction.CallbackContext context);
     }
     public interface IPauseActionMapActions
     {
         void OnUnpauseGame(InputAction.CallbackContext context);
+        void OnInventory(InputAction.CallbackContext context);
     }
 }

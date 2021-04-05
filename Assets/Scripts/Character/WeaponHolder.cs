@@ -68,6 +68,8 @@ namespace Weapons
 
         private void StartFiring()
         {
+            if (EquippedWeapon == null) return;
+
             if (EquippedWeapon.WeaponStats.TotalBulletsAvailable <= 0
                 && EquippedWeapon.WeaponStats.BulletsInClip <= 0) return;
 
@@ -78,6 +80,8 @@ namespace Weapons
 
         private void StopFiring()
         {
+            if (EquippedWeapon == null) return;
+
             PlayerController.isFiring = false;
             PlayerAnimator.SetBool(IsFiringHash, PlayerController.isFiring);
             EquippedWeapon.StopFiring();
@@ -85,6 +89,8 @@ namespace Weapons
 
         public void OnReload(InputValue button)
         {
+            if (EquippedWeapon == null) return;
+
             StartReloading();
         }
 
