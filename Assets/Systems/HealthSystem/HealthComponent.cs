@@ -43,4 +43,9 @@ public class HealthComponent : MonoBehaviour, IDamageable
             Destroy();
         }
     }
+
+    internal void SetCurrentHealth(float health)
+    {
+        CurrentHealth = health;
+    }
 }

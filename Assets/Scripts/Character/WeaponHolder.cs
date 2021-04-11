@@ -24,7 +24,9 @@ namespace Weapons
 
         // Ref
         private Camera MainCamera;
-        private WeaponComponent EquippedWeapon;
+
+        public WeaponComponent EquippedWeapon => WeaponComponent;
+        private WeaponComponent WeaponComponent;
 
         // Animator Hashes
         private readonly int AimVerticalHash = Animator.StringToHash("AimVertical");
@@ -138,7 +140,7 @@ namespace Weapons
             if (!spawnedWeapon) return;
 
             spawnedWeapon.transform.parent = WeaponSocket;
-            EquippedWeapon = spawnedWeapon.GetComponent<WeaponComponent>();
+            WeaponComponent = spawnedWeapon.GetComponent<WeaponComponent>();
 
             GripLocation = EquippedWeapon.HandPosition;
 
@@ -151,7 +153,7 @@ namespace Weapons
         public void UnequipWeapon()
         {
             Destroy(EquippedWeapon.gameObject);
-            EquippedWeapon = null;
+            WeaponComponent = null;
         }
 
     }

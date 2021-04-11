@@ -12,11 +12,11 @@ public class WeaponScriptable : EquippableScriptable
         base.UseItem(controller);
         if (Equipped)
         {
-            controller.WeaponHolder.EquipWeapon(this);
+            controller.EquippedWeapon.EquipWeapon(this);
         }
         else
         {
-            controller.WeaponHolder.UnequipWeapon();
+            controller.EquippedWeapon.UnequipWeapon();
         }
     }
 }

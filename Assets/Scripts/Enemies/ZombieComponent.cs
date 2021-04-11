@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(StateMachine))]
+[RequireComponent(typeof(ZombieStateMachine))]
 
 public class ZombieComponent : MonoBehaviour
 {
@@ -14,7 +14,7 @@ public class ZombieComponent : MonoBehaviour
     public NavMeshAgent ZombieNavMesh { get; private set; }
     public Animator ZombieAnimator { get; private set; }
     public GameObject FollowTarget;
-    public StateMachine StateMachine { get; private set; }
+    public ZombieStateMachine StateMachine { get; private set; }
 
     [SerializeField] private bool _Debug;
 
@@ -22,7 +22,7 @@ public class ZombieComponent : MonoBehaviour
     {
         ZombieNavMesh = GetComponent<NavMeshAgent>();
         ZombieAnimator = GetComponent<Animator>();
-        StateMachine = GetComponent<StateMachine>();
+        StateMachine = GetComponent<ZombieStateMachine>();
     }
 
     // Start is called before the first frame update

@@ -1938,12 +1938,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1062527254232455022}
   - component: {fileID: 1145323500188842888}
-  - component: {fileID: 7018173490547514994}
   - component: {fileID: 5168963029248828112}
   - component: {fileID: 4229345391766922557}
   - component: {fileID: 2482017199560907319}
   - component: {fileID: 1418195139164908}
   - component: {fileID: 1418195139164909}
+  - component: {fileID: 2940489329287372419}
   m_Layer: 0
   m_Name: Zombie_Bellboy
   m_TagString: Untagged
@@ -2035,18 +2035,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7018173490547514994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1059683220787957422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97a51b051251264479fdadcc8d61ee6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5168963029248828112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2127,6 +2115,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TotalHealth: 100
+--- !u!114 &2940489329287372419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059683220787957422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f23b9269b29b9948a846851e2cf5dcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1059684237153154554
 GameObject:
   m_ObjectHideFlags: 0
